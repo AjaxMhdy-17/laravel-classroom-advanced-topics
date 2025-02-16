@@ -12,7 +12,7 @@ class IncrementDate extends Command
      *
      * @var string
      */
-    protected $signature = 'app:increment-date';
+    protected $signature = 'app:increment-date {--days=1}';
 
     /**
      * The console command description.
@@ -28,7 +28,7 @@ class IncrementDate extends Command
     {
         $scheduledClasses = ScheduledClass::latest('date_time')->get() ; 
         $scheduledClasses->each(function($class){
-            $class->date_time = $class->date_time->addDays(1);
+            $class->date_time = $class->date_time->addDays($this->option('days'));
             $class->save() ; 
         });
     }
