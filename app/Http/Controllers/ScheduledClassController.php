@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ClassCanceled;
 use App\Models\ClassType;
 use App\Models\ScheduledClass;
 use Illuminate\Http\Request;
@@ -62,21 +63,16 @@ class ScheduledClassController extends Controller
     public function destroy(string $id)
     {
 
-        // dd(auth()->user()->id) ; 
+       
         $class = ScheduledClass::findorFail($id) ; 
 
         if(auth()->user()->cannot('delete',$class)){
             abort(403) ; 
         }
 
-       
-
-        // if(auth()->user()->id != $class->teacher_id){
-        //     abort(403) ; 
-        // }
-
+        ClassCanceled::dispatch($class);
+        $class->student()->detach();
         $class->delete() ; 
-
         return redirect()->route('schedule.index') ; 
     }
 }
